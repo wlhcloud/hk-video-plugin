@@ -30,7 +30,7 @@ public class StrategyFactory {
     static {
         STRATEGY_MAP.put("startPreview", new StartPreviewOperation());
         STRATEGY_MAP.put("stopPreview", new StopPreviewOperation());
-        STRATEGY_MAP.put("status", new GetDeviceStatusOperation());
+        STRATEGY_MAP.put("deviceStatus", new GetDeviceStatusOperation());
 
         // 其他操作
     }

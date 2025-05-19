@@ -69,8 +69,8 @@ public class EHomeController {
             deviceInfoMap.put("deviceId", "245652081");
             deviceInfoMap.put("wsPort", "8024");
 
-            videoPluginMain.execute("startPreview",  deviceInfoMap);
-
+            String startPreview = videoPluginMain.execute("startPreview", deviceInfoMap);
+            System.out.println(startPreview);
 
             Thread.sleep(1000*20);
 //            videoPluginMain.execute("stopPreview",  deviceInfoMap);

@@ -2,25 +2,28 @@ package com.device.hk.stream;
 
 import lombok.Data;
 
-@Data
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class FlvCache {
-    private static byte[] flvHeader;
-    private static byte[] keyFrame;
+    private static final Map<String, byte[]> flvHeaders = new ConcurrentHashMap<>();
+    private static final Map<String, byte[]> keyFrames = new ConcurrentHashMap<>();
 
-    public static synchronized void setFlvHeader(byte[] header) {
-        flvHeader = header;
+    public static void cacheFlvHeader(String playKey, byte[] header) {
+        flvHeaders.put(playKey, header);
     }
 
-    public static synchronized byte[] getFlvHeader() {
-        return flvHeader;
+    public static void cacheKeyFrame(String playKey, byte[] keyFrame) {
+        keyFrames.put(playKey, keyFrame);
     }
 
-    public static synchronized void setKeyFrame(byte[] frame) {
-        keyFrame = frame;
+    public static byte[] getFlvHeader(String playKey) {
+        return flvHeaders.get(playKey);
     }
 
-    public static synchronized byte[] getKeyFrame() {
-        return keyFrame;
+    public static byte[] getKeyFrame(String playKey) {
+        return keyFrames.get(playKey);
     }
 }
+
 

@@ -32,19 +32,7 @@ public class HandleStreamV2 {
     private String rtmpUrl;
     private String hlsDir;
     private Consumer<byte[]> frameConsumer;
-
-    /**
-     * 初始化推流
-     * @param completableFutureOne 推流完成回调
-     * @param frameConsumer 视频帧回调
-     */
-    public HandleStreamV2(
-            CompletableFuture<String> completableFutureOne,
-            Consumer<byte[]> frameConsumer
-    ) {
-        this(null,null,true, completableFutureOne,frameConsumer);
-    }
-
+    private String playKey;
     /**
      * 初始化推流
      * @param rtmpUrl rtmp地址
@@ -54,6 +42,7 @@ public class HandleStreamV2 {
      * @param frameConsumer 视频帧回调
      */
     public HandleStreamV2(
+            String playKey,
             String rtmpUrl,
             String hlsDir,
             boolean enableWebSocket,
@@ -61,6 +50,7 @@ public class HandleStreamV2 {
             Consumer<byte[]> frameConsumer
     ) {
         try {
+            this.playKey = playKey;
             this.enableWebSocket = enableWebSocket;
             this.rtmpUrl = rtmpUrl;
             this.hlsDir = hlsDir;
@@ -91,7 +81,7 @@ public class HandleStreamV2 {
 
                 // 根据配置添加推流策略
                 if (enableWebSocket) {
-                    strategies.add(new WebSocketOutputStrategy(frameConsumer));
+                    strategies.add(new WebSocketOutputStrategy(playKey,frameConsumer));
                 }
                 if (rtmpUrl != null && !rtmpUrl.isEmpty()) {
                     strategies.add(new RtmpOutputStrategy(rtmpUrl));
@@ -116,6 +106,7 @@ public class HandleStreamV2 {
                     }
                     if (pkt.size() == 0) {
                         log.warn("Empty packet received, skipping...");
+                        Thread.sleep(100); // 等待 100 毫秒，防止 CPU 过高
                         continue;
                     }
                     for (StreamOutputStrategy strategy : strategies) {
@@ -141,6 +132,7 @@ public class HandleStreamV2 {
     }
 
     public void close() {
+        running = false;
         try {
             for (StreamOutputStrategy strategy : strategies) {
                 strategy.close();

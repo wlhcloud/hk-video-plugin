@@ -36,6 +36,11 @@ public class DevicesModule {
      */
     private short wsPort;
 
+    /**
+     * playKey 默认为设备id
+     */
+    private String playKey;
+
 
     public DevicesModule(DeviceInfo deviceInfo) {
         this.deviceInfo = deviceInfo;

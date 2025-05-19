@@ -3,11 +3,13 @@ package com.device.hk.callback;
 
 import com.device.hk.SdkService.CmsService.CMS;
 import com.device.hk.SdkService.CmsService.HCISUPCMS;
+import com.device.hk.SdkService.StreamService.SMS;
 import com.device.hk.VideoConfigManager;
 import com.device.hk.VideoPluginConfig;
 import com.device.hk.common.DeviceListUtil;
 import com.device.hk.module.DevicesModule;
 import com.device.hk.po.DeviceInfo;
+import com.device.hk.stream.HandleStreamV2;
 import com.sun.jna.Pointer;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,7 @@ import java.util.List;
 
 /**
  * ISUP-海康注册回调
+ *
  * @author wulihao
  */
 public class FRegisterCallBack implements HCISUPCMS.DEVICE_REGISTER_CB {
@@ -36,15 +39,15 @@ public class FRegisterCallBack implements HCISUPCMS.DEVICE_REGISTER_CB {
 
                 String deviceID = new String(strDevRegInfo.struRegInfo.byDeviceID).trim();
                 String deviceIP = new String(strDevRegInfo.struRegInfo.struDevAdd.szIP).trim();
-                short devicePort =  strDevRegInfo.struRegInfo.struDevAdd.wPort;
-                System.out.println("设备上线==========>,DeviceID:"+ deviceID
-                +"，DeviceIP:" + deviceIP
-                +"，DevicePort:" + devicePort
+                short devicePort = strDevRegInfo.struRegInfo.struDevAdd.wPort;
+                System.out.println("设备上线==========>,DeviceID:" + deviceID
+                        + "，DeviceIP:" + deviceIP
+                        + "，DevicePort:" + devicePort
                 );
 
                 // 添加在线设备
                 DevicesModule devicesModule = DeviceListUtil.getDeviceModuleByDeviceId(deviceID);
-                if(devicesModule == null){
+                if (devicesModule == null) {
                     // 获取设备集合
                     List<DevicesModule> deviceList = DeviceListUtil.getDeviceList();
 
@@ -54,10 +57,11 @@ public class FRegisterCallBack implements HCISUPCMS.DEVICE_REGISTER_CB {
                     deviceInfo.setDeviceIp(deviceIP);
                     deviceInfo.setDevicePort(devicePort);
                     DevicesModule registerModule = new DevicesModule(deviceInfo);
+                    registerModule.setPlayKey(deviceID);
                     registerModule.setLUserID(lUserID);
                     registerModule.setOnline(true);
                     deviceList.add(registerModule);
-                }else {
+                } else {
                     // 修改在线状态、登录userid
                     devicesModule.setOnline(true);
                     devicesModule.setLUserID(lUserID);
@@ -102,8 +106,19 @@ public class FRegisterCallBack implements HCISUPCMS.DEVICE_REGISTER_CB {
                 byte[] bs1 = dasInfo.getBytes();
                 pInBuffer.write(0, bs1, 0, dasInfo.length());
                 break;
+            case HCISUPCMS.EHOME_REGISTER_TYPE.ENUM_DEV_OFF: // 设备下线
+                devicesModule = DeviceListUtil.getDeviceModuleBylUser(lUserID);
+                System.out.println("设备下线==========>,DeviceID:" + devicesModule.getDeviceInfo().getDeviceId()
+                        + "，DeviceIP:" + devicesModule.getDeviceInfo().getDeviceIp()
+                        + "，DevicePort:" + devicesModule.getDeviceInfo().getDevicePort()
+                );
+
+                // 设备下线
+                devicesModule.setOnline(false);
+                // 清除缓存
+                SMS.cleanCache(devicesModule.getPlayKey());
             default:
-                System.out.println("回调类型为:"+dwDataType);
+                System.out.println("回调类型为:" + dwDataType);
                 break;
         }
         return true;

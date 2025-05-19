@@ -21,9 +21,11 @@ public class WebSocketOutputStrategy implements StreamOutputStrategy {
     private final ByteArrayOutputStream outputStreamPush = new ByteArrayOutputStream(4096 * 5);
     private final Consumer<byte[]> frameConsumer;
     private FFmpegFrameRecorder recorder;
+    private final String playKey;
 
-    public WebSocketOutputStrategy(Consumer<byte[]> frameConsumer) {
+    public WebSocketOutputStrategy(String playKey,Consumer<byte[]> frameConsumer) {
         this.frameConsumer = frameConsumer;
+        this.playKey = playKey;
     }
 
     @Override
@@ -41,11 +43,11 @@ public class WebSocketOutputStrategy implements StreamOutputStrategy {
         outputStreamPush.reset();
 
         if (flvData.length > 0 && frameConsumer != null) {
-            if (FlvCache.getFlvHeader() == null) {
-                FlvCache.setFlvHeader(flvData);
+            if (FlvCache.getFlvHeader(playKey) == null) {
+                FlvCache.cacheFlvHeader(playKey, flvData);
             }
-            if (FlvCache.getKeyFrame() == null && isKeyFrame(flvData)) {
-                FlvCache.setKeyFrame(flvData);
+            if (FlvCache.getKeyFrame(playKey) == null && isKeyFrame(flvData)) {
+                FlvCache.cacheKeyFrame(playKey,flvData);
             }
             frameConsumer.accept(flvData);
         }

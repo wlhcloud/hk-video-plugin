@@ -190,7 +190,7 @@ public class SMS {
 
             if (concurrentMap.get(struPushInfoIn.lSessionID) == null) {
                 concurrentMap.put(struPushInfoIn.lSessionID,
-                        new HandleStreamV2(config.getRtmpUrl(), config.getHlsUrl(), true,completableFutureOne, frameConsumer));
+                        new HandleStreamV2(playKey,config.getRtmpUrl(), config.getHlsUrl(), true,completableFutureOne, frameConsumer));
                 System.out.println("加入concurrentMap :" + luserID);
             }
         }
@@ -202,14 +202,7 @@ public class SMS {
     public void StopRealPlay(String playKey, int luserID, int sessionID, int lPreviewHandle) {
 
         //停止线程
-        HandleStreamV2 handleStreamV2 = concurrentMap.get(sessionID);
-        handleStreamV2.close();
-        handleStreamV2.stopProcessing();
-
-        concurrentMap.remove(sessionID);
-        PreviewHandSAndSessionIDandMap.remove(lPreviewHandle);
-        LuserIDandSessionMap.remove(playKey);
-        SessionIDAndPreviewHandleMap.remove(sessionID);
+        cleanCache(playKey);
 
         if (!concurrentMap.containsKey(sessionID) && !PreviewHandSAndSessionIDandMap.containsKey(lPreviewHandle) && !LuserIDandSessionMap.containsKey(playKey) && !SessionIDAndPreviewHandleMap.containsKey(sessionID)) {
             System.out.println("会话" + sessionID + "相关资源已被清空");
@@ -254,4 +247,22 @@ public class SMS {
         }
     }
 
+    /**
+     * 停止回放监听
+     */
+    public static void cleanCache(String playKey) {
+        //停止线程
+        Integer sessionID = SMS.LuserIDandSessionMap.get(playKey);
+        if (sessionID == null) {
+            return;
+        }
+        HandleStreamV2 handleStreamV2 = SMS.concurrentMap.get(sessionID);
+        handleStreamV2.close();
+        handleStreamV2.stopProcessing();
+        Integer lPreviewHandle = SMS.SessionIDAndPreviewHandleMap.get(sessionID);
+        SMS.concurrentMap.remove(sessionID);
+        SMS.PreviewHandSAndSessionIDandMap.remove(lPreviewHandle);
+        SMS.LuserIDandSessionMap.remove(playKey);
+        SMS.SessionIDAndPreviewHandleMap.remove(sessionID);
+    }
 }

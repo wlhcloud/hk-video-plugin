@@ -31,7 +31,6 @@ public class StopPreviewOperation implements DeviceOperationStrategy{
     public AjaxResult executeOperation(Map<String,Object> config)
     {
         Object deviceId = config.get("deviceId");
-        Object wsPort = config.get("wsPort");
         DevicesModule devicesModule = DeviceListUtil.getDeviceModuleByDeviceId(String.valueOf(deviceId));
         if (devicesModule == null) {
             return AjaxResult.error("设备未注册");
@@ -40,8 +39,7 @@ public class StopPreviewOperation implements DeviceOperationStrategy{
         System.out.println("停止设备预览，IP = " + deviceInfo.getDeviceIp() + ", 端口 = " + deviceInfo.getDevicePort());
 
         SMS sms = new SMS();
-        String playKey = deviceInfo.getDeviceId()+wsPort;
-        Integer sessionId = SMS.LuserIDandSessionMap.get(playKey);
+        Integer sessionId = SMS.LuserIDandSessionMap.get(devicesModule.getPlayKey());
         if (sessionId == null) {
             return AjaxResult.error("设备未预览");
         }
@@ -49,7 +47,7 @@ public class StopPreviewOperation implements DeviceOperationStrategy{
         if (previewHandle == null) {
             return AjaxResult.error("设备未预览");
         }
-        sms.StopRealPlay(deviceInfo.getDeviceId()+wsPort,devicesModule.getLUserID(),sessionId,previewHandle);
+        sms.StopRealPlay(devicesModule.getPlayKey(),devicesModule.getLUserID(),sessionId,previewHandle);
 
         return AjaxResult.success("设备预览已停止");
     }

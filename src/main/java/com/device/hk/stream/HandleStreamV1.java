@@ -135,12 +135,12 @@ public class HandleStreamV1 {
 
                             if (flvData.length > 0 && frameConsumer != null) {
                                 // 设置 FLV header（通常只需要设置一次）
-                                if (FlvCache.getFlvHeader() == null) {
-                                    FlvCache.setFlvHeader(flvData); // 前 13 字节为标准 FLV 头（或更长，视情况）
+                                if (FlvCache.getFlvHeader(playKey) == null) {
+                                    FlvCache.cacheFlvHeader(playKey,flvData); // 前 13 字节为标准 FLV 头（或更长，视情况）
                                 }
 
-                                if (FlvCache.getKeyFrame() == null && isKeyFrame(flvData)) {
-                                    FlvCache.setKeyFrame(flvData);
+                                if (FlvCache.getKeyFrame(playKey) == null && isKeyFrame(flvData)) {
+                                    FlvCache.cacheKeyFrame(playKey,flvData);
                                 }
 
                                 frameConsumer.accept(flvData);  // 调用外部定义的 WebSocket 发送逻辑

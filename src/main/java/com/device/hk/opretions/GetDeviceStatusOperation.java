@@ -3,6 +3,8 @@ package com.device.hk.opretions;
 import com.device.hk.DeviceOperationStrategy;
 import com.device.hk.VideoPluginConfig;
 import com.device.hk.common.AjaxResult;
+import com.device.hk.common.DeviceListUtil;
+import com.device.hk.module.DevicesModule;
 import com.device.hk.po.DeviceInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,8 +28,16 @@ import java.util.Objects;
 public class GetDeviceStatusOperation implements DeviceOperationStrategy {
     @Override
     public AjaxResult executeOperation(Map<String,Object> config) {
-        ObjectMapper mapper = new ObjectMapper();
-        DeviceInfo deviceInfo = mapper.convertValue(config, DeviceInfo.class);
+        Object deviceId = config.get("deviceId");
+
+        DevicesModule devicesModule = DeviceListUtil.getDeviceModuleByDeviceId(String.valueOf(deviceId));
+        if (devicesModule == null) {
+            return AjaxResult.error("设备未注册");
+        }
+        if(!devicesModule.isOnline()){
+            return AjaxResult.error("设备未在线");
+        }
+        DeviceInfo deviceInfo = devicesModule.getDeviceInfo();
         // 这里执行获取设备状态的具体逻辑
         System.out.println("获取设备状态，IP = " +deviceInfo.getDeviceIp() + ", 端口 = " + deviceInfo.getDevicePort());
         // 假设获取状态成功
