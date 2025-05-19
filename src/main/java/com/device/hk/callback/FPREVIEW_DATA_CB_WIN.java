@@ -3,14 +3,12 @@ package com.device.hk.callback;
 import com.device.hk.SdkService.StreamService.HCISUPSMS;
 import com.device.hk.SdkService.StreamService.HCNetSDK;
 import com.device.hk.SdkService.StreamService.SMS;
-import com.device.hk.common.HandleStreamV2;
+import com.device.hk.stream.HandleStreamV2;
 import com.sun.jna.Pointer;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

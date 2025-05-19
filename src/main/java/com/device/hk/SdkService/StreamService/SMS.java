@@ -7,15 +7,14 @@ import com.device.hk.VideoPluginConfig;
 import com.device.hk.callback.FPREVIEW_NEWLINK_CB_WIN;
 import com.device.hk.callback.PLAYBACK_NEWLINK_CB_WIN;
 import com.device.hk.common.CommonUtil;
-import com.device.hk.common.HandleStreamV2;
+import com.device.hk.common.DeviceListUtil;
+import com.device.hk.stream.HandleStreamV2;
 import com.device.hk.common.osSelect;
+import com.device.hk.module.DevicesModule;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -156,7 +155,7 @@ public class SMS {
         struPreviewIn.dwLinkMode = 0; //0- TCP方式，1- UDP方式
         struPreviewIn.dwStreamType = 0; //码流类型：0- 主码流，1- 子码流, 2- 第三码流
         struPreviewIn.struStreamSever.szIP = config.getEhomePuIp().getBytes();
-        ;//流媒体服务器IP地址,公网地址
+        //流媒体服务器IP地址,公网地址
         struPreviewIn.struStreamSever.wPort = config.getEhomeSmsPreViewPort(); //流媒体服务器端口，需要跟服务器启动监听端口一致
         struPreviewIn.write();
         //预览请求
@@ -168,7 +167,6 @@ public class SMS {
         } else {
             struPreviewOut.read();
             System.out.println("请求预览成功, sessionID:" + struPreviewOut.lSessionID);
-//            sessionID = struPreviewOut.lSessionID;
         }
         HCISUPCMS.NET_EHOME_PUSHSTREAM_IN struPushInfoIn = new HCISUPCMS.NET_EHOME_PUSHSTREAM_IN();
         struPushInfoIn.read();
@@ -191,8 +189,9 @@ public class SMS {
             }
 
             if (concurrentMap.get(struPushInfoIn.lSessionID) == null) {
+                concurrentMap.put(struPushInfoIn.lSessionID,
+                        new HandleStreamV2(config.getRtmpUrl(), config.getHlsUrl(), true,completableFutureOne, frameConsumer));
                 System.out.println("加入concurrentMap :" + luserID);
-                concurrentMap.put(struPushInfoIn.lSessionID, new HandleStreamV2(playKey, completableFutureOne,frameConsumer));
             }
         }
     }
@@ -200,10 +199,11 @@ public class SMS {
     /**
      * 停止预览,Stream服务停止实时流转发，CMS向设备发送停止预览请求
      */
-    public void StopRealPlay(String playKey,int luserID, int sessionID, int lPreviewHandle) {
+    public void StopRealPlay(String playKey, int luserID, int sessionID, int lPreviewHandle) {
 
         //停止线程
         HandleStreamV2 handleStreamV2 = concurrentMap.get(sessionID);
+        handleStreamV2.close();
         handleStreamV2.stopProcessing();
 
         concurrentMap.remove(sessionID);

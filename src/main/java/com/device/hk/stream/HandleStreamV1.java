@@ -1,4 +1,4 @@
-package com.device.hk.common;
+package com.device.hk.stream;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bytedeco.ffmpeg.avcodec.AVPacket;
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  * @author wulihao
  */
 @Slf4j
-public class HandleStreamV2 {
+public class HandleStreamV1 {
     private PipedOutputStream outputStream;
     private ByteArrayOutputStream outputStreamPush;
     private PipedInputStream inputStream;
@@ -35,7 +35,7 @@ public class HandleStreamV2 {
 
     private CompletableFuture<String> completableFutureString;
 
-    public HandleStreamV2(String playKey, CompletableFuture<String> completableFuture,Consumer<byte[]> frameConsumer) {
+    public HandleStreamV1(String playKey, CompletableFuture<String> completableFuture,Consumer<byte[]> frameConsumer) {
         try {
             completableFutureString = completableFuture;
             this.playKey = playKey;
@@ -191,3 +191,4 @@ public class HandleStreamV2 {
     }
 
 }
+

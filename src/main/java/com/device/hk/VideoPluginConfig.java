@@ -2,95 +2,33 @@ package com.device.hk;
 
 import com.device.hk.po.DeviceInfo;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 视频插件配置
- * @author hk
+ * @author wulihao
  */
+@Configuration
+@Data
 public class VideoPluginConfig {
+    @Value("${ehome.pu-ip}")
     private String ehomePuIp;
+    @Value("${ehome.in-ip}")
     private String ehomeInIp;
+    @Value("${ehome.sms-preview-port}")
     private short ehomeSmsPreViewPort;
+    @Value("${ehome.sms-back-server-ip}")
     private String smsBackServerListenIP;
+    @Value("${ehome.sms-back-server-port}")
     private short smsBackServerListenPort;
+    @Value("${ehome.cms-port}")
     private short ehomeCmsPort;
+    @Value("${ehome.secret-key}")
     private String secretKey;
-    private DeviceInfo deviceInfo;
-    private short wsPort;
-
-    public VideoPluginConfig() {
-    }
-
-    public DeviceInfo getDeviceInfo() {
-        return deviceInfo;
-    }
-
-    public void setDeviceInfo(DeviceInfo deviceInfo) {
-        this.deviceInfo = deviceInfo;
-    }
-
-    public String getEhomePuIp() {
-        return ehomePuIp;
-    }
-
-    public void setEhomePuIp(String ehomePuIp) {
-        this.ehomePuIp = ehomePuIp;
-    }
-
-    public String getEhomeInIp() {
-        return ehomeInIp;
-    }
-
-    public void setEhomeInIp(String ehomeInIp) {
-        this.ehomeInIp = ehomeInIp;
-    }
-
-    public short getEhomeSmsPreViewPort() {
-        return ehomeSmsPreViewPort;
-    }
-
-    public void setEhomeSmsPreViewPort(short ehomeSmsPreViewPort) {
-        this.ehomeSmsPreViewPort = ehomeSmsPreViewPort;
-    }
-
-    public String getSmsBackServerListenIP() {
-        return smsBackServerListenIP;
-    }
-
-    public void setSmsBackServerListenIP(String smsBackServerListenIP) {
-        this.smsBackServerListenIP = smsBackServerListenIP;
-    }
-
-    public short getSmsBackServerListenPort() {
-        return smsBackServerListenPort;
-    }
-
-    public void setSmsBackServerListenPort(short smsBackServerListenPort) {
-        this.smsBackServerListenPort = smsBackServerListenPort;
-    }
-
-    public short getEhomeCmsPort() {
-        return ehomeCmsPort;
-    }
-
-    public void setEhomeCmsPort(short ehomeCmsPort) {
-        this.ehomeCmsPort = ehomeCmsPort;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public short getWsPort() {
-        return wsPort;
-    }
-
-    public void setWsPort(short wsPort) {
-        this.wsPort = wsPort;
-    }
+    @Value("${ehome.hls-url}")
+    private String hlsUrl;
+    @Value("${ehome.rtmp-url}")
+    private String rtmpUrl;
 }
 

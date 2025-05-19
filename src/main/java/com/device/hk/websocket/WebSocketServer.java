@@ -1,6 +1,6 @@
 package com.device.hk.websocket;
 
-import com.device.hk.common.FlvCache;
+import com.device.hk.stream.FlvCache;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 
@@ -8,6 +8,9 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.*;
 
+/**
+ * websocket服务端
+ */
 public class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     // 固定大小线程池，比如10个线程，数量可调节

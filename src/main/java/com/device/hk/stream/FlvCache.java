@@ -1,4 +1,4 @@
-package com.device.hk.common;
+package com.device.hk.stream;
 
 import lombok.Data;
 
