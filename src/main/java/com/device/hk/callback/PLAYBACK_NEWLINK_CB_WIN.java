@@ -3,8 +3,6 @@ package com.device.hk.callback;
 import com.device.hk.SdkService.StreamService.HCISUPSMS;
 import com.device.hk.SdkService.StreamService.SMS;
 import com.sun.jna.Pointer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 预览监听回调

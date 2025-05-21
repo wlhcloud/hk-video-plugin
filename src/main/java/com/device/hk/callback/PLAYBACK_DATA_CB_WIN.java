@@ -2,7 +2,6 @@ package com.device.hk.callback;
 
 import com.device.hk.SdkService.StreamService.HCISUPSMS;
 import com.sun.jna.Pointer;
-import org.springframework.stereotype.Component;
 
 /**
  * 预览数据回调

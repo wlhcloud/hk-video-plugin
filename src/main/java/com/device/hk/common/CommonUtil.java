@@ -24,7 +24,7 @@ public class CommonUtil {
         try {
             String path = Thread.currentThread().getContextClassLoader().getResource("").toURI().getPath();
 //            path = path.replace("/classes/", "/hk-device-lib/");
-            path = path.replace("/classes/", "/lib/");
+            path = path.replace("/classes/", "/hk-lib/");
             path = path.replace("/target/", "/");
             path = path.substring(1, path.length());
             path = path.replace("/", "\\");
