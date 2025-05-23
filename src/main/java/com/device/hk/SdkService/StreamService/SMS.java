@@ -55,6 +55,7 @@ public class SMS {
             ptrByteArrayCrypto.write();
             if (!hcISUPSMS.NET_ESTREAM_SetSDKInitCfg(0, ptrByteArrayCrypto.getPointer())) {
                 System.out.println("NET_ESTREAM_SetSDKInitCfg 0 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
+                throw new RuntimeException("NET_ESTREAM_SetSDKInitCfg 0 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
             }
 
             HCISUPCMS.BYTE_ARRAY ptrByteArraySsl = new HCISUPCMS.BYTE_ARRAY(256);
@@ -63,6 +64,7 @@ public class SMS {
             ptrByteArraySsl.write();
             if (!hcISUPSMS.NET_ESTREAM_SetSDKInitCfg(1, ptrByteArraySsl.getPointer())) {
                 System.out.println("NET_ESTREAM_SetSDKInitCfg 1 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
+                throw new RuntimeException("NET_ESTREAM_SetSDKInitCfg 1 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
             }
             //流媒体初始化
             boolean b = hcISUPSMS.NET_ESTREAM_Init();
@@ -70,6 +72,7 @@ public class SMS {
                 System.out.println("SMS 流媒体初始化成功!");
             } else {
                 System.out.println("SMS 流媒体初始化失败! 错误码:" + hcISUPSMS.NET_ESTREAM_GetLastError());
+                throw new RuntimeException("SMS 流媒体初始化失败! 错误码:" + hcISUPSMS.NET_ESTREAM_GetLastError());
             }
             //设置HCAapSDKCom组件库文件夹所在路径
             HCISUPCMS.BYTE_ARRAY ptrByteArrayCom = new HCISUPCMS.BYTE_ARRAY(256);
@@ -78,6 +81,7 @@ public class SMS {
             ptrByteArrayCom.write();
             if (!hcISUPSMS.NET_ESTREAM_SetSDKLocalCfg(5, ptrByteArrayCom.getPointer())) {
                 System.out.println("NET_ESTREAM_SetSDKLocalCfg 5 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
+                throw new RuntimeException("NET_ESTREAM_SetSDKLocalCfg 5 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
             }
             hcISUPSMS.NET_ESTREAM_SetLogToFile(3, "..\\EHomeSDKLog", false);
         } else if (osSelect.isLinux()) {
@@ -88,6 +92,7 @@ public class SMS {
             ptrByteArrayCrypto.write();
             if (!hcISUPSMS.NET_ESTREAM_SetSDKInitCfg(0, ptrByteArrayCrypto.getPointer())) {
                 System.out.println("NET_ESTREAM_SetSDKInitCfg 0 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
+                throw new RuntimeException("NET_ESTREAM_SetSDKInitCfg 0 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
             }
             //设置libssl.so所在路径
             HCISUPCMS.BYTE_ARRAY ptrByteArraySsl = new HCISUPCMS.BYTE_ARRAY(256);
@@ -96,6 +101,7 @@ public class SMS {
             ptrByteArraySsl.write();
             if (!hcISUPSMS.NET_ESTREAM_SetSDKInitCfg(1, ptrByteArraySsl.getPointer())) {
                 System.out.println("NET_ESTREAM_SetSDKInitCfg 1 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
+                throw new RuntimeException("NET_ESTREAM_SetSDKInitCfg 1 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
             }
             //流媒体初始化
             boolean b = hcISUPSMS.NET_ESTREAM_Init();
@@ -103,6 +109,7 @@ public class SMS {
                 System.out.println("SMS 流媒体初始化成功!");
             } else {
                 System.out.println("SMS 流媒体初始化失败! 错误码:" + hcISUPSMS.NET_ESTREAM_GetLastError());
+                throw new RuntimeException("SMS 流媒体初始化失败! 错误码:" + hcISUPSMS.NET_ESTREAM_GetLastError());
             }
             //设置HCAapSDKCom组件库文件夹所在路径
             HCISUPCMS.BYTE_ARRAY ptrByteArrayCom = new HCISUPCMS.BYTE_ARRAY(256);
@@ -111,6 +118,7 @@ public class SMS {
             ptrByteArrayCom.write();
             if (!hcISUPSMS.NET_ESTREAM_SetSDKLocalCfg(5, ptrByteArrayCom.getPointer())) {
                 System.out.println("NET_ESTREAM_SetSDKLocalCfg 5 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
+                throw new RuntimeException("NET_ESTREAM_SetSDKLocalCfg 5 failed, error:" + hcISUPSMS.NET_ESTREAM_GetLastError());
             }
             hcISUPSMS.NET_ESTREAM_SetLogToFile(3, "./EHomeSDKLog", false);
         }
@@ -135,7 +143,7 @@ public class SMS {
             System.out.println("SMS流媒体服务监听失败, 错误码:" + hcISUPSMS.NET_ESTREAM_GetLastError());
 //            SMSListenerFlag=false;
             hcISUPSMS.NET_ESTREAM_Fini();
-            return;
+            throw new RuntimeException("SMS流媒体服务监听失败, 错误码:" + hcISUPSMS.NET_ESTREAM_GetLastError());
         } else {
             String StreamListenInfo = new String(struPreviewListen.struIPAdress.szIP).trim() + "_" + struPreviewListen.struIPAdress.wPort;
             System.out.println("SMS流媒体服务:" + StreamListenInfo + "监听成功!");
@@ -163,7 +171,7 @@ public class SMS {
         //请求开始预览
         if (!CMS.hcISUPCMS.NET_ECMS_StartGetRealStream(luserID, struPreviewIn, struPreviewOut)) {
             System.out.println("请求开始预览失败,错误码:" + CMS.hcISUPCMS.NET_ECMS_GetLastError());
-            return;
+            throw new RuntimeException("请求开始预览失败,错误码:" + CMS.hcISUPCMS.NET_ECMS_GetLastError());
         } else {
             struPreviewOut.read();
             System.out.println("请求预览成功, sessionID:" + struPreviewOut.lSessionID);
@@ -180,7 +188,7 @@ public class SMS {
         //中心管理服务器（CMS）向设备发送请求，设备开始传输预览实时码流
         if (!CMS.hcISUPCMS.NET_ECMS_StartPushRealStream(luserID, struPushInfoIn, struPushInfoOut)) {
             System.out.println("CMS向设备发送请求预览实时码流失败, error code:" + CMS.hcISUPCMS.NET_ECMS_GetLastError());
-            return;
+            throw new RuntimeException("CMS向设备发送请求预览实时码流失败, error:" + CMS.hcISUPCMS.NET_ECMS_GetLastError());
         } else {
             System.out.println("CMS向设备发送请求预览实时码流成功, sessionID:" + struPushInfoIn.lSessionID);
 

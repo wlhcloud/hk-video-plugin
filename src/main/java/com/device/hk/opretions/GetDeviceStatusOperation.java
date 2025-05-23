@@ -1,15 +1,12 @@
 package com.device.hk.opretions;
 
 import com.device.hk.DeviceOperationStrategy;
-import com.device.hk.VideoPluginConfig;
 import com.device.hk.common.AjaxResult;
 import com.device.hk.common.DeviceListUtil;
 import com.device.hk.module.DevicesModule;
 import com.device.hk.po.DeviceInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 获取设备状态的操作类，实现了 DeviceOperationStrategy 接口。

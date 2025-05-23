@@ -43,52 +43,53 @@ import java.util.function.Consumer;
 public class StartPreviewOperation implements DeviceOperationStrategy {
     @Override
     public AjaxResult executeOperation(Map<String, Object> config) {
-        Object deviceId = config.get("deviceId");
-        Object wsPort = config.get("wsPort");
-
-        DevicesModule devicesModule = DeviceListUtil.getDeviceModuleByDeviceId(String.valueOf(deviceId));
-        if (devicesModule == null) {
-            return AjaxResult.error("设备未注册");
-        }
-        if(!devicesModule.isOnline()){
-            return AjaxResult.error("设备未在线");
-        }
-        devicesModule.setWsPort(Short.parseShort(String.valueOf(wsPort)));
-        DeviceInfo deviceInfo = devicesModule.getDeviceInfo();
-
-        // 打印预览设备信息
-        System.out.println("启动设备预览，IP = " + deviceInfo.getDeviceIp() + ", ws端口 = " + devicesModule.getWsPort());
-
-        // 启动或获取 WebSocket 服务
-        WebSocketServer wsServer = WebSocketManager.getOrCreateServer(devicesModule.getWsPort());
-
-        // 创建异步控制器
-        CompletableFuture<String> completableFuture = new CompletableFuture<>();
-
-        // 定义视频帧消费逻辑（推送给 WebSocket 客户端）
-        // 将 frame 推送给所有连接的客户端，或按 playKey 选择推送
-        Consumer<byte[]> frameConsumer = frame -> {
-            wsServer.sendToPlayKey(devicesModule.getPlayKey(), frame);
-        };
-
-        // 启动视频预览
-        SMS sms = new SMS();
-        sms.RealPlay(
-                devicesModule.getPlayKey(),                                      // playKey
-                devicesModule.getLUserID(),                   // 登录ID
-                completableFuture,                            // 结果通知
-                frameConsumer                                 // 视频帧回调
-        );
-
-        // 等待结果
         try {
+
+            Object deviceId = config.get("deviceId");
+            Object wsPort = config.get("wsPort");
+
+            DevicesModule devicesModule = DeviceListUtil.getDeviceModuleByDeviceId(String.valueOf(deviceId));
+            if (devicesModule == null) {
+                return AjaxResult.error("设备未注册");
+            }
+            if (!devicesModule.isOnline()) {
+                return AjaxResult.error("设备未在线");
+            }
+            devicesModule.setWsPort(Short.parseShort(String.valueOf(wsPort)));
+            DeviceInfo deviceInfo = devicesModule.getDeviceInfo();
+
+            // 打印预览设备信息
+            System.out.println("启动设备预览，IP = " + deviceInfo.getDeviceIp() + ", ws端口 = " + devicesModule.getWsPort());
+
+            // 启动或获取 WebSocket 服务
+            WebSocketServer wsServer = WebSocketManager.getOrCreateServer(devicesModule.getWsPort());
+
+            // 创建异步控制器
+            CompletableFuture<String> completableFuture = new CompletableFuture<>();
+
+            // 定义视频帧消费逻辑（推送给 WebSocket 客户端）
+            // 将 frame 推送给所有连接的客户端，或按 playKey 选择推送
+            Consumer<byte[]> frameConsumer = frame -> {
+                wsServer.sendToPlayKey(devicesModule.getPlayKey(), frame);
+            };
+
+            // 启动视频预览
+            SMS sms = new SMS();
+            sms.RealPlay(
+                    devicesModule.getPlayKey(),                                      // playKey
+                    devicesModule.getLUserID(),                   // 登录ID
+                    completableFuture,                            // 结果通知
+                    frameConsumer                                 // 视频帧回调
+            );
+
+            // 等待结果
             String realPlayResult = completableFuture.get();  // 阻塞等待启动结果
             System.out.println("异步结果是 " + realPlayResult);
             if (Objects.equals(realPlayResult, "true")) {
                 return AjaxResult.success("设备预览启动成功");
             }
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
         }
         return AjaxResult.error("设备预览启动失败");
     }

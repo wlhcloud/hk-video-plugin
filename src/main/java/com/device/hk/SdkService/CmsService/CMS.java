@@ -52,9 +52,9 @@ public class CMS {
             //注册服务初始化
             boolean binit = hcISUPCMS.NET_ECMS_Init();
             if(binit){
-                System.out.println("CMS 注册中心初始化成功!");
             }else {
                 System.out.println("CMS 注册中心初始化失败! 错误码:"+hcISUPCMS.NET_ECMS_GetLastError());
+                throw new RuntimeException("CMS 注册中心初始化失败!");
             }
             //设置HCAapSDKCom组件库文件夹所在路径
             HCISUPCMS.BYTE_ARRAY ptrByteArrayCom = new HCISUPCMS.BYTE_ARRAY(256);
@@ -83,6 +83,7 @@ public class CMS {
                 System.out.println("CMS 注册中心初始化成功!");
             }else {
                 System.out.println("CMS 注册中心初始化失败! 错误码:"+hcISUPCMS.NET_ECMS_GetLastError());
+                throw new RuntimeException("CMS 注册中心初始化失败!");
             }
             //设置HCAapSDKCom组件库文件夹所在路径
             HCISUPCMS.BYTE_ARRAY ptrByteArrayCom = new HCISUPCMS.BYTE_ARRAY(256);
